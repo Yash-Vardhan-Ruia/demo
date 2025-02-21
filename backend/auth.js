@@ -47,7 +47,7 @@ export async function signInWithGitHub() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL || "https://notifypro.tech/dashboard"
+      redirectTo: process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL || "https://localhost:3000/dashboard"
     }
   });
   if (error) throw error;
