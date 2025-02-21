@@ -44,13 +44,13 @@ export async function signIn(email, password) {
 
 // Sign in with GitHub.
 export async function signInWithGitHub() {
+  const redirectURL = process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL || "https://localhost:3000/dashboard";
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
-    options: {
-      redirectTo: process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL || "https://localhost:3000/dashboard"
-    }
+    options: { redirectTo: redirectURL }
   });
   if (error) throw error;
+  console.log("GitHub OAuth redirect URL:", data?.url);
   return data;
 }
 

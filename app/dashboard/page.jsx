@@ -1,6 +1,6 @@
 "use client";
-import React from 'react';
-import { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
 import { Inter } from "next/font/google";
 import { cn } from "../components/lib/utils";
 import { ThemeProvider } from "../components/theme-provider";
@@ -13,16 +13,32 @@ import { SpreadsheetComponent } from "../components/spreadsheet";
 import { KanbanBoard } from "../components/kanban-board";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { supabase } from "../../backend/supabaseClient";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const router = useRouter();
 
   // Hydration fix to ensure consistency between SSR & client
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   if (!mounted) return null; // Prevents hydration mismatch
+
+  useEffect(() => {
+    if (window.location.hash) {
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const accessToken = params.get("access_token");
+      if (accessToken) {
+        localStorage.setItem("token", accessToken);
+        // Clear the hash and reload the page to remove it from the URL.
+        window.history.replaceState(null, "", window.location.pathname);
+        router.refresh();
+      }
+    }
+  }, [router]);
 
   const createNewPage = async () => {
     try {
