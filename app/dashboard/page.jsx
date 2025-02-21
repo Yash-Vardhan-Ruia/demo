@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import "../globals.css";
 import { Inter } from "next/font/google";
-import { cn } from "../components/lib/utils";
-import { ThemeProvider } from "../components/theme-provider";
-import { Sidebar } from "../components/sidebar";
-import { Editor } from "../components/editor";
-import { Button } from "../components/ui/button";
+import { cn } from "../../components/lib/utils";
+import { ThemeProvider } from "../../components/theme-provider";
+import { Sidebar } from "../../components/sidebar";
+import { Editor } from "../../components/editor";
+import { Button } from "../../components/ui/button";
 import { MessageSquare, Share2, LayoutDashboard, FileText, Table, Trello, Plus } from "lucide-react";
 import { Dashboard } from "../components/dashboard";
 import { SpreadsheetComponent } from "../components/spreadsheet";
