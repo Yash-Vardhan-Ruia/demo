@@ -35,7 +35,7 @@ const Register = () => {
       setMessage("Registration successful! Redirecting...");
 
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push("/");
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.error || "Something went wrong");
@@ -149,7 +149,7 @@ const Register = () => {
           {/* Register with GitHub */}
           <button
             type="button"
-            onClick={() => console.log("Register with GitHub")}
+            onClick={() => window.location.href = "/api/auth/github"}
             className="w-full bg-gray-800 text-white p-2 rounded mt-6 flex items-center justify-center hover:bg-gray-700 "
           >
             <FaGithub className="mr-2" />

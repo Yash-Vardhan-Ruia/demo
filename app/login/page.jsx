@@ -114,7 +114,7 @@ const Login = () => {
 
           {/* GitHub Login Button */}
           <button
-            onClick={() => console.log("Login with GitHub")}
+            onClick={() => window.location.href = "/api/auth/github"}
             className="w-full bg-gray-800 text-white p-2 rounded mt-6 flex items-center justify-center hover:bg-gray-700"
           >
             <FaGithub className="mr-2" />

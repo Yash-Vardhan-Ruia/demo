@@ -1,10 +1,10 @@
 "use client";
-
+import React, { useEffect, useCallback } from 'react';
+import { useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Heading from "@tiptap/extension-heading";
 import { EditorToolbar } from "./editor-toolbar";
-import { useEffect, useCallback } from "react";
 import { supabase } from "../../backend/supabaseClient";
 import { debounce } from "lodash";
 
