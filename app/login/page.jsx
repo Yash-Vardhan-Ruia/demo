@@ -6,7 +6,6 @@ import axios from "axios";
 import { FaGithub, FaEye, FaEyeSlash } from "react-icons/fa";
 import Image from "next/image"; // ✅ Next.js optimized Image component
 import { Spotlight } from "../blocks/Spotlight/NewSpotlight"; // ✅ Import remains unchanged
-import { signInWithGitHub, signIn } from "../../backend/auth.js"; // Added for GitHub auth and signIn
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -20,34 +19,17 @@ const Login = () => {
     setError(null);
 
     try {
-      const userResponse = await signIn(email, password);
-      if (userResponse) {
-        // Check email_confirmed_at to see if the user is verified.
-        if (userResponse.email_confirmed_at) {
-          router.push("/dashboard");
-        } else {
-          setError("Login failed: User email is not verified.");
-        }
-      } else {
-        setError("Login failed: No user returned.");
-      }
-    } catch (err) {
-      setError(err.message || "Something went wrong");
-    }
-  };
+      // Updated endpoint to use Supabase login route.
+      const res = await axios.post("/api/auth/login", { email, password });
 
-  const handleGitHubLogin = async () => {
-    try {
-      const data = await signInWithGitHub();
-      if (data?.session) {
-        localStorage.setItem("token", data.session.access_token);
+      if (res.data.data.session) {
+        localStorage.setItem("token", res.data.data.session.access_token);
         router.push("/dashboard");
       } else {
-        setError("GitHub login did not return a valid session.");
+        setError("Login failed: No session received.");
       }
     } catch (err) {
-      console.error("GitHub login error:", err);
-      setError("GitHub authentication failed.");
+      setError(err.response?.data?.error || "Something went wrong");
     }
   };
 
@@ -132,7 +114,7 @@ const Login = () => {
 
           {/* GitHub Login Button */}
           <button
-            onClick={handleGitHubLogin} // Updated to use auth.js GitHub sign in
+            onClick={() => console.log("Login with GitHub")}
             className="w-full bg-gray-800 text-white p-2 rounded mt-6 flex items-center justify-center hover:bg-gray-700"
           >
             <FaGithub className="mr-2" />

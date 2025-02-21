@@ -6,7 +6,6 @@ import axios from "axios";
 import { FaGithub, FaEye, FaEyeSlash } from "react-icons/fa";
 import Image from "next/image";
 import { Spotlight } from "../blocks/Spotlight/NewSpotlight";
-import { signInWithGitHub, signUp } from "../../backend/auth.js"; // Added for GitHub auth and signUp
 
 const Register = () => {
   const [user, setUser] = useState({
@@ -31,25 +30,15 @@ const Register = () => {
     setMessage(null);
 
     try {
-      const userResponse = await signUp(user.email, user.password, user.firstName, user.lastName);
+      // Updated endpoint to use Supabase signup route.
+      const res = await axios.post("/api/auth/signup", user);
       setMessage("Registration successful! Redirecting...");
 
       setTimeout(() => {
         router.push("/dashboard");
       }, 2000);
     } catch (err) {
-      setError(err.message || "Something went wrong");
-    }
-  };
-
-  const handleGitHubAuth = async () => {
-    try {
-      const data = await signInWithGitHub();
-      // Assuming a successful OAuth redirect/session storage happens here.
-      router.push("/dashboard");
-    } catch (err) {
-      console.error("GitHub auth error:", err);
-      setError("GitHub authentication failed.");
+      setError(err.response?.data?.error || "Something went wrong");
     }
   };
 
@@ -160,7 +149,7 @@ const Register = () => {
           {/* Register with GitHub */}
           <button
             type="button"
-            onClick={handleGitHubAuth} // Updated to call auth.js GitHub function
+            onClick={() => console.log("Register with GitHub")}
             className="w-full bg-gray-800 text-white p-2 rounded mt-6 flex items-center justify-center hover:bg-gray-700 "
           >
             <FaGithub className="mr-2" />
