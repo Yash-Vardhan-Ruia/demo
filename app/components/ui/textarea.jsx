@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "../lib/utils"; // Assuming `cn` is available
+import { cn } from "./utils"; // Assuming `cn` is available
 
 const Textarea = React.forwardRef(({ className, ...props }, ref) => (
   <textarea

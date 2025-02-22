@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-import { cn } from "../lib/utils"; // Assuming `cn` is a class utility function
+import { cn } from "./utils"; // Assuming `cn` is a class utility function
 
 const Tabs = TabsPrimitive.Root;
 

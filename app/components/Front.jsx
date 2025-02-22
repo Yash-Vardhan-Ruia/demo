@@ -1,24 +1,21 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Search, Plus, Calendar as CalendarIcon, ListChecks, StickyNote, Moon, Sun } from "lucide-react";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../components/ui/tooltip";
-import { Toggle } from "../components/ui/toggle";
-import { Textarea } from "../components/ui/textarea";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/tabs";
-import { Calendar } from "../components/ui/calendar";
-import { useToast } from "../hooks/use-toast";
-import { Toaster } from "../components/ui/toaster";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./ui/tooltip";
+import { Textarea } from "./ui/textarea";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
+import { Calendar } from "./ui/calendar";
 
-export function Dashboard() {
+export function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [darkMode, setDarkMode] = useState(false);
   const [quickNote, setQuickNote] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
-  const { toast } = useToast();
-
+  const [mounted, setMounted] = useState(false);
+  
   useEffect(() => {
+    setMounted(true);
     const intervalId = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
@@ -27,9 +24,9 @@ export function Dashboard() {
 
   const greeting = () => {
     const hour = currentTime.getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
   };
 
   const addNote = () => {
@@ -45,14 +42,13 @@ export function Dashboard() {
   };
 
   return (
-    <div className={`min-h-screen p-8 transition-colors ${darkMode ? "bg-gray-900 text-white" : "bg-gray-50"}`}>
-      <Toaster />
+    <div className="min-h-screen p-8 transition-colors bg-gray-50 text-gray-900">
       <TooltipProvider>
         <header className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-2xl md:text-4xl font-bold">{greeting()}, User!</h1>
             <p className="text-sm opacity-80">
-              {currentTime.toLocaleTimeString()} - {currentTime.toLocaleDateString()}
+              {mounted ? `${currentTime.toLocaleTimeString("en-Uk", { hour12: true })} - ${currentTime.toLocaleDateString()}` : ""}
             </p>
           </div>
 
@@ -73,24 +69,19 @@ export function Dashboard() {
               <Plus className="h-4 w-4 md:h-5 md:w-5" />
               New Page
             </Button>
-
-            {/* Dark Mode Toggle */}
-            <Toggle onClick={() => setDarkMode(!darkMode)} className="w-10 h-10">
-              {darkMode ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-gray-600" />}
-            </Toggle>
           </div>
         </header>
 
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Quick Notes Section */}
-          <Card className="shadow-sm hover:shadow-md transition border-none bg-white dark:bg-gray-800">
+          <Card className="shadow-sm hover:shadow-md transition border-none bg-white">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-semibold flex items-center gap-2">
                 <StickyNote className="h-5 w-5 text-gray-500" /> Quick Notes
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 text-sm mb-3 dark:text-gray-400">
+              <p className="text-gray-600 text-sm mb-3">
                 Jot down your ideas quickly and capture your thoughts.
               </p>
               <Textarea
@@ -106,7 +97,7 @@ export function Dashboard() {
           </Card>
 
           {/* Tasks Section with Tabs */}
-          <Card className="shadow-sm hover:shadow-md transition border-none bg-white dark:bg-gray-800">
+          <Card className="shadow-sm hover:shadow-md transition border-none bg-white">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-semibold flex items-center gap-2">
                 <ListChecks className="h-5 w-5 text-gray-500" /> Tasks
@@ -114,7 +105,7 @@ export function Dashboard() {
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="all">
-                <TabsList className="w-full flex justify-between bg-gray-200 dark:bg-gray-700 p-1 rounded-md">
+                <TabsList className="w-full flex justify-between bg-gray-200 p-1 rounded-md">
                   <TabsTrigger value="all">All Tasks</TabsTrigger>
                   <TabsTrigger value="completed">Completed</TabsTrigger>
                 </TabsList>
@@ -132,14 +123,14 @@ export function Dashboard() {
           </Card>
 
           {/* Upcoming Events Section with Calendar */}
-          <Card className="shadow-sm hover:shadow-md transition border-none bg-white dark:bg-gray-800">
+          <Card className="shadow-sm hover:shadow-md transition border-none bg-white">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-semibold flex items-center gap-2">
                 <CalendarIcon className="h-5 w-5 text-gray-500" /> Upcoming Events
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 text-sm mb-3 dark:text-gray-400">
+              <p className="text-gray-600 text-sm mb-3">
                 Stay updated with your schedule and never miss an event.
               </p>
               <Calendar
@@ -158,3 +149,4 @@ export function Dashboard() {
     </div>
   );
 }
+export default Home;

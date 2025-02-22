@@ -1,115 +1,232 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Inter } from "next/font/google";
-import { cn } from "../components/lib/utils";
-import { ThemeProvider } from "../components/theme-provider";
-import { Sidebar } from "../components/sidebar";
-import { Editor } from "../components/editor";
-import { Button } from "../components/ui/button";
-import { MessageSquare, Share2, LayoutDashboard, FileText, Table, Trello, Plus } from "lucide-react";
-import { Dashboard } from "../components/dashboard";
-import { SpreadsheetComponent } from "../components/spreadsheet";
-import { KanbanBoard } from "../components/kanban-board";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { supabase } from "../../backend/supabaseClient";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { Sidebar, SidebarBody, SidebarLink } from "../blocks/sidebar/sidebar";
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconBrandTabler,
+  IconSettings,
+  IconUserBolt,
+  IconPlus,
+  IconMessageCircle,
+  IconShare,
+} from "@tabler/icons-react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { cn } from "../blocks/sidebar/utils";
+import Settings from "../components/settings"; // Import the settings component
+import Home from "../components/Front"; // Import the Home component
+import InviteCollaborator from "../components/Invite"; // Import Invite Collaborator component
 
-const inter = Inter({ subsets: ["latin"] });
+export function Page() {
+  const [open, setOpen] = useState(false);
+  const [activePage, setActivePage] = useState("home"); // Track the active page (home, settings, invite)
+  const [pageHistory, setPageHistory] = useState(["home"]); // History of pages visited
+  const [historyIndex, setHistoryIndex] = useState(0); // Index of the current active page in the history
 
-export default function Page() {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const router = useRouter();
+  // Links configuration
+  const links = [
+    {
+      label: "Home",
+      href: "#",
+      icon: (
+        <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-7 w-7 flex-shrink-0 ml-1 mt-1" />
+      ),
+    },
+    {
+      label: "Invite Collaborator",
+      href: "#",
+      icon: (
+        <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-7 w-7 flex-shrink-0 ml-1" />
+      ),
+    },
+    {
+      label: "New Page",
+      href: "#",
+      icon: (
+        <IconPlus className="text-neutral-700 dark:text-neutral-200 h-7 w-7 flex-shrink-0 ml-1" />
+      ),
+      onClick: () => {}, // Do nothing when "New Page" is clicked
+    },
+    {
+      label: "Settings",
+      href: "#", // We will handle the click with a function instead of a Link
+      icon: (
+        <IconSettings className="text-neutral-700 dark:text-neutral-200 h-7 w-7 flex-shrink-0 ml-1" />
+      ),
+    },
+  ];
 
-  // Hydration fix to ensure consistency between SSR & client
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null; // Prevents hydration mismatch
-
-  useEffect(() => {
-    if (window.location.hash) {
-      const hash = window.location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      const accessToken = params.get("access_token");
-      if (accessToken) {
-        localStorage.setItem("token", accessToken);
-        // Clear the hash and reload the page to remove it from the URL.
-        window.history.replaceState(null, "", window.location.pathname);
-        router.refresh();
-      }
+  // Handle clicking the sidebar buttons
+  const handleClick = (page) => {
+    if (page !== "newpage") {
+      const newHistory = pageHistory.slice(0, historyIndex + 1); // Remove forward history if we're adding a new page
+      setPageHistory([...newHistory, page]); // Add new page to history
+      setHistoryIndex(historyIndex + 1); // Set current page to the end of the history
+      setActivePage(page); // Set the active page
     }
-  }, [router]);
+  };
 
-  const createNewPage = async () => {
-    try {
-      const { error } = await supabase.from("pages").insert([{ title: "New Page", content: "" }]);
-      if (error) throw error;
-      alert("New page created!");
-    } catch (err) {
-      console.error("Failed to create page:", err.message);
+  // Navigate to the previous page
+  const handlePrevious = () => {
+    if (historyIndex > 0) {
+      setHistoryIndex(historyIndex - 1); // Move to previous page
+      setActivePage(pageHistory[historyIndex - 1]); // Set active page
+    }
+  };
+
+  // Navigate to the next page
+  const handleNext = () => {
+    if (historyIndex < pageHistory.length - 1) {
+      setHistoryIndex(historyIndex + 1); // Move to next page
+      setActivePage(pageHistory[historyIndex + 1]); // Set active page
     }
   };
 
   return (
-      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-        <div className="flex h-screen">
-          <Sidebar />
-          <main className="flex-1 flex flex-col">
-            {/* Header Section */}
-            <header className="flex items-center justify-between px-6 py-3 border-b bg-white">
-              <h1 className="text-xl font-semibold">My Workspace</h1>
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm">
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  Comment
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
-                <Button variant="outline" onClick={createNewPage}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Page
-                </Button>
-              </div>
-            </header>
-
-            {/* Tabs Section */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-              <TabsList className="justify-start px-6 py-2 bg-gray-100">
-                <TabsTrigger value="dashboard">
-                  <LayoutDashboard className="h-4 w-4 mr-2" />
-                  Dashboard
-                </TabsTrigger>
-                <TabsTrigger value="document">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Document
-                </TabsTrigger>
-                <TabsTrigger value="spreadsheet">
-                  <Table className="h-4 w-4 mr-2" />
-                  Spreadsheet
-                </TabsTrigger>
-                <TabsTrigger value="kanban">
-                  <Trello className="h-4 w-4 mr-2" />
-                  Kanban
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Tab Contents */}
-              <TabsContent value="dashboard" className="flex-1 p-6 bg-gray-50">
-                <Dashboard />
-              </TabsContent>
-              <TabsContent value="document" className="flex-1 p-6 bg-white">
-                <Editor />
-              </TabsContent>
-              <TabsContent value="spreadsheet" className="flex-1 p-6 bg-white">
-                <SpreadsheetComponent />
-              </TabsContent>
-              <TabsContent value="kanban" className="flex-1 p-6 bg-gray-50">
-                <KanbanBoard />
-              </TabsContent>
-            </Tabs>
-          </main>
-        </div>
-      </ThemeProvider>
+    <div className={cn("flex h-screen")}>
+      <Sidebar open={open} setOpen={setOpen}>
+        <SidebarBody className="justify-between gap-10 p-4">
+          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-[#2C1A47]">
+            {open ? <Logo /> : <LogoIcon />}
+            <div className="mt-8 flex flex-col gap-2">
+              {links.map((link, idx) => (
+                <SidebarLink
+                  key={idx}
+                  link={link}
+                  onClick={() => handleClick(link.label.toLowerCase().replace(' ', ''))} // Handle click to set active page
+                />
+              ))}
+            </div>
+          </div>
+          <div>
+            <SidebarLink
+              link={{
+                label: "Manu Arora",
+                href: "#",
+                icon: (
+                  <Image
+                    src="https://assets.aceternity.com/manu.png"
+                    className="h-10 w-10 flex-shrink-0 rounded-full"
+                    width={40}
+                    height={40}
+                    alt="Avatar"
+                  />
+                ),
+              }}
+            />
+          </div>
+        </SidebarBody>
+      </Sidebar>
+      <Dashboard
+        activePage={activePage}
+        handlePrevious={handlePrevious}
+        handleNext={handleNext}
+      />
+    </div>
   );
 }
+
+export const Logo = () => {
+  return (
+    <Link
+      href="#"
+      className="font-normal flex space-x-2 items-center text-sm text-white py-1 relative z-20"
+    >
+      <Image
+        src="/assets/logo.png"
+        alt="Logo"
+        width={40}
+        height={40}
+        className="h-10 w-10 rounded-full"
+      />
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="font-medium text-white text-2xl whitespace-pre"
+      >
+        NoTiFy
+      </motion.span>
+    </Link>
+  );
+};
+
+export const LogoIcon = () => {
+  return (
+    <Link
+      href="#"
+      className="font-normal flex space-x-2 items-center text-sm text-white py-1 relative z-20"
+    >
+      <Image
+        src="/assets/logo.png"
+        alt="Logo"
+        width={40}
+        height={40}
+        className="h-10 w-10 rounded-full"
+      />
+    </Link>
+  );
+};
+
+// Dummy dashboard component with content
+const Dashboard = ({ activePage, handlePrevious, handleNext }) => {
+  return (
+    <div className="flex-1 p-2 md:p-10 border border-neutral-200 dark:border-neutral-700 bg-black dark:bg-black flex flex-col gap-2 w-full h-full relative">
+      {/* Left Side Navigation (Next/Previous buttons) */}
+      <div className="absolute opacity-60 left-10 flex gap-4 z-50">
+        {/* Previous Button */}
+        <button
+          onClick={handlePrevious}
+          className="flex items-center justify-center p-3 bg-[#6A3D9B] rounded-full text-white shadow-md hover:bg-[#573085]"
+        >
+          <IconArrowLeft className="h-6 w-6" />
+        </button>
+        {/* Next Button */}
+        <button
+          onClick={handleNext}
+          className="flex items-center justify-center p-3 bg-[#6A3D9B] rounded-full text-white shadow-md hover:bg-[#573085]"
+        >
+          <IconArrowRight className="h-6 w-6" />
+        </button>
+      </div>
+
+      {/* Top 4 Black Rectangular Boxes */}
+      <div className="flex gap-2">
+        {[...new Array(4)].map((_, i) => (
+          <div
+            key={"first-array" + i}
+            className="h-16 w-full rounded-lg bg-black dark:bg-black"
+          ></div>
+        ))}
+      </div>
+
+      {/* Right Section with Comment and Share buttons */}
+      <div className=" -mt-12 flex gap-4 justify-end">
+        {/* Comment Button */}
+        <button className="flex items-center gap-2 px-4 py-2 bg-[#6A3D9B] rounded-md text-white -mt-4">
+          <IconMessageCircle className="h-5 w-5" />
+          <span className="text-sm">Comment</span>
+        </button>
+
+        {/* Share Button */}
+        <button className="flex items-center gap-2 px-4 py-2 bg-[#6A3D9B] rounded-md text-white -mt-4">
+          <IconShare className="h-5 w-5" />
+          <span className="text-sm">Share</span>
+        </button>
+      </div>
+
+      {/* Combined Grey Box (Stretching across the available width) */}
+      <div className="h-[700px] mt-4 w-full rounded-lg bg-gray-100 dark:bg-neutral-800 overflow-hidden">
+        {/* Conditionally render based on the active page */}
+        <div className="w-full h-full object-cover overflow-hidden">
+          {activePage === "home" && <Home />}
+          {activePage === "invitecollaborator" && <InviteCollaborator />}
+          {activePage === "settings" && <Settings />}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Page;

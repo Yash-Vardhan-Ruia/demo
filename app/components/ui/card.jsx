@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "../lib/utils";
+import { cn } from "./utils";
 
 export function Card({ className, as: Component = "div", ...props }) {
   return (

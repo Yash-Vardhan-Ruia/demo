@@ -3,10 +3,32 @@ import { signUp } from "../../../../backend/auth";
 
 export async function POST(req) {
   try {
-    const { email, password, firstName, lastName } = await req.json();
-    const user = await signUp(email, password, firstName, lastName);
-    return NextResponse.json({ message: "User registered", user });
+    // Ensure only POST requests are processed
+    if (req.method !== "POST") {
+      return NextResponse.json({ error: "Method Not Allowed" }, { status: 405 });
+    }
+
+    // Parse request body
+    const body = await req.json();
+    const { email, password, firstName, lastName } = body;
+
+    // Validate input
+    if (!email || !password || !firstName || !lastName) {
+      console.error("Validation error: Missing required fields");
+      return NextResponse.json(
+        { success: false, error: "All fields (email, password, first name, last name) are required." },
+        { status: 200 }
+      );
+    }
+
+    // Call signUp from auth.js
+    const signupResponse = await signUp(email, password, firstName, lastName);
+
+    // Return success
+    return NextResponse.json({ success: true, data: signupResponse }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    console.error("Sign-up error:", error);
+    // Return error message
+    return NextResponse.json({ success: false, error: error.message || "Registration failed" }, { status: 200 });
   }
 }
