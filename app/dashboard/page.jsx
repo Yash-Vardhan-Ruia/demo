@@ -29,6 +29,47 @@ import Spreadsheet from "../components/Spreadsheet";
 import Taskmanager from "../components/TaskManager";
 import Mealplanner from "../components/Mealplanner";
 
+export const Logo = () => {
+  return (
+    <Link
+      href="#"
+      className="font-normal flex space-x-2 items-center text-sm text-white py-1 relative z-20"
+    >
+      <Image
+        src="/assets/logo.png"
+        alt="Logo"
+        width={40}
+        height={40}
+        className="h-10 w-10 rounded-full"
+      />
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="font-medium text-white text-2xl whitespace-pre"
+      >
+        NoTiFy
+      </motion.span>
+    </Link>
+  );
+};
+
+export const LogoIcon = () => {
+  return (
+    <Link
+      href="#"
+      className="font-normal flex space-x-2 items-center text-sm text-white py-1 relative z-20"
+    >
+      <Image
+        src="/assets/logo.png"
+        alt="Logo"
+        width={40}
+        height={40}
+        className="h-10 w-10 rounded-full"
+      />
+    </Link>
+  );
+};
+
 export function Page() {
   const [open, setOpen] = useState(false);
   const [activePage, setActivePage] = useState("home"); // Track the active page (home, settings, invite)
@@ -165,47 +206,6 @@ export function Page() {
     </div>
   );
 }
-
-export const Logo = () => {
-  return (
-    <Link
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-white py-1 relative z-20"
-    >
-      <Image
-        src="/assets/logo.png"
-        alt="Logo"
-        width={40}
-        height={40}
-        className="h-10 w-10 rounded-full"
-      />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium text-white text-2xl whitespace-pre"
-      >
-        NoTiFy
-      </motion.span>
-    </Link>
-  );
-};
-
-export const LogoIcon = () => {
-  return (
-    <Link
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-white py-1 relative z-20"
-    >
-      <Image
-        src="/assets/logo.png"
-        alt="Logo"
-        width={40}
-        height={40}
-        className="h-10 w-10 rounded-full"
-      />
-    </Link>
-  );
-};
 
 // Dummy dashboard component with content
 const Dashboard = ({ activePage, handlePrevious, handleNext }) => {
