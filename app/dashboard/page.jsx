@@ -162,7 +162,7 @@ export function Page() {
   };
 
   return (
-    <div className={cn("flex h-screen")}></div>
+    <div className={cn("flex h-screen")}>
       <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="justify-between gap-10 p-4">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden bg-[#2C1A47]">
@@ -228,7 +228,7 @@ const Dashboard = ({ activePage, handlePrevious, handleNext }) => {
       </div>
 
       {/* Top 4 Black Rectangular Boxes */}
-      <div className="flex gap-2"></div>
+      <div className="flex gap-2">
         {[...new Array(4)].map((_, i) => (
           <div
             key={"first-array" + i}
@@ -246,7 +246,7 @@ const Dashboard = ({ activePage, handlePrevious, handleNext }) => {
         </button>
 
         {/* Share Button */}
-        <button className="flex items-center gap-2 px-4 py-2 bg-[#6A3D9B] rounded-md text-white -mt-4"></button>
+        <button className="flex items-center gap-2 px-4 py-2 bg-[#6A3D9B] rounded-md text-white -mt-4">
           <IconShare className="h-5 w-5" />
           <span className="text-sm">Share</span>
         </button>
