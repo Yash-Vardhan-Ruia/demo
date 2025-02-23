@@ -99,6 +99,7 @@
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.173.0",
     "tiptap": "^1.32.2",
+    "trace": "^3.2.0",
     "turbopack": "^0.0.1",
     "zod": "^3.24.1"
   },
