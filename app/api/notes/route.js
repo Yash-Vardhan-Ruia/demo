@@ -1,4 +1,4 @@
-import { supabase } from "../../../../lib/supabaseClient";
+import { supabase } from "../../../lib/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
 
 // GET notes by user_id (passed as query param)
