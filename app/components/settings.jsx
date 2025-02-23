@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { Save, User, Camera, Trash, LogOut, FileText, CheckCircle, Calendar, Globe } from "lucide-react";
 import { motion } from "framer-motion";

@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useRef } from "react";
 import { FaPlus, FaEllipsisH } from "react-icons/fa"; // Import the plus icon and three-dot icon
 import Editor from "./Editor"; // Import your Editor component
